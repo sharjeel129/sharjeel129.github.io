@@ -1,0 +1,49 @@
+.table-proj {
+	inline-size: -webkit-fill-available;
+	border-collapse: collapse;
+	table-layout: fixed; /* Ensures equal width for each cell */
+}
+.table-proj td {
+	padding: 8px;
+	width: 20%; /* Adjust as needed to ensure equal width */
+}
+.collapsible-paragraph-header {
+	font-style: normal;
+	text-transform: capitalize;
+	font-variant: small-caps;
+	font-weight: lighter;
+}
+.collapsible-paragraph-text {
+	border-style: solid;
+	border-color: #dcdcdc;
+	padding: 20px 5px 20px 20px;
+	border-radius: 25px;
+}
+.btn {
+	font-size: 1rem;
+	font-weight: 400;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+		"Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
+		"Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+	border: 2px solid black;
+	border-color: #bd5d38 !important;
+	border-radius: 5px;
+	background-color: white;
+	color: #868e96;
+}
+
+.btn:hover {
+	background: #bd5d38 !important;
+	color: white;
+}
+.table-proj {
+	inline-size: -webkit-fill-available;
+}
+.img-proj {
+	width: 200px;
+	height: 200px;
+}
+.date-proj {
+	float: right;
+	color: #ff5d1c;
+}
