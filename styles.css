@@ -48,9 +48,8 @@
 	color: #ff5d1c;
 }
 
-/* Left side navigation gradient override (top -> bottom) */
+/* Left side navigation: solid background (no gradient) */
 #sideNav {
-	background: linear-gradient(to bottom, #0b3d91 0%, #2a7bd8 100%) !important;
 	border-right: none;
 	/* keep text/icons readable */
 	color: #fff;
