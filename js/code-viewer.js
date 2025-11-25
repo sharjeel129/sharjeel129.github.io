@@ -91,124 +91,66 @@ class CodeViewer {
 	highlightCode(codeBlock) {
 		// Python keywords
 		const keywords = [
-			"def",
-			"class",
-			"import",
-			"from",
-			"if",
-			"else",
-			"elif",
-			"for",
-			"while",
-			"try",
-			"except",
-			"finally",
-			"with",
-			"return",
-			"yield",
-			"lambda",
-			"pass",
-			"break",
-			"continue",
-			"in",
-			"is",
-			"not",
-			"and",
-			"or",
-			"as",
-			"None",
-			"True",
-			"False",
-			"async",
-			"await",
-			"assert",
-			"del",
-			"raise",
-			"global",
-			"nonlocal",
+			"def", "class", "import", "from", "if", "else", "elif", "for", "while", "try", 
+			"except", "finally", "with", "return", "yield", "lambda", "pass", "break", 
+			"continue", "in", "is", "not", "and", "or", "as", "None", "True", "False", 
+			"async", "await", "assert", "del", "raise", "global", "nonlocal"
 		]
+		
 		const builtins = [
-			"print",
-			"len",
-			"range",
-			"enumerate",
-			"zip",
-			"map",
-			"filter",
-			"sorted",
-			"sum",
-			"max",
-			"min",
-			"abs",
-			"str",
-			"int",
-			"float",
-			"list",
-			"dict",
-			"set",
-			"tuple",
-			"open",
-			"input",
-			"isinstance",
-			"type",
-			"hasattr",
-			"getattr",
-			"setattr",
-			"super",
-			"property",
-			"staticmethod",
-			"classmethod",
+			"print", "len", "range", "enumerate", "zip", "map", "filter", "sorted", "sum", 
+			"max", "min", "abs", "str", "int", "float", "list", "dict", "set", "tuple", 
+			"open", "input", "isinstance", "type", "hasattr", "getattr", "setattr", 
+			"super", "property", "staticmethod", "classmethod"
 		]
 
-		let html = codeBlock.textContent
-
-		// Escape HTML special characters
-		html = html
+		let text = codeBlock.textContent
+		
+		// Escape HTML first
+		text = text
 			.replace(/&/g, "&amp;")
 			.replace(/</g, "&lt;")
 			.replace(/>/g, "&gt;")
-			.replace(/"/g, "&quot;")
-			.replace(/'/g, "&#39;")
 
-		// Comments (green)
-		html = html.replace(
-			/^(\s*)#.*$/gm,
-			'$1<span class="py-comment">#' +
-				html.match(/^(\s*)#.*$/gm)?.[0]?.replace(/^(\s*)#/, "") +
-				"</span>"
-		)
+		// Split into lines and process each line
+		let lines = text.split("\n")
+		let result = []
 
-		// Strings (orange/red)
-		html = html.replace(
-			/(['"])(?:(?=(\\?))\2.)*?\1/g,
-			'<span class="py-string">$&</span>'
-		)
-
-		// Keywords (blue)
-		keywords.forEach((keyword) => {
-			const regex = new RegExp(`\\b${keyword}\\b`, "g")
-			html = html.replace(
-				regex,
-				`<span class="py-keyword">${keyword}</span>`
-			)
+		lines.forEach(line => {
+			let processedLine = line
+			
+			// Handle comments
+			let commentIndex = processedLine.indexOf("#")
+			let beforeComment = ""
+			let comment = ""
+			
+			if (commentIndex !== -1) {
+				beforeComment = processedLine.substring(0, commentIndex)
+				comment = processedLine.substring(commentIndex)
+			} else {
+				beforeComment = processedLine
+			}
+			
+			// Process keywords and builtins in the non-comment part
+			keywords.forEach(keyword => {
+				const regex = new RegExp(`\\b${keyword}\\b`, "g")
+				beforeComment = beforeComment.replace(regex, `<span class="py-keyword">${keyword}</span>`)
+			})
+			
+			builtins.forEach(builtin => {
+				const regex = new RegExp(`\\b${builtin}\\b`, "g")
+				beforeComment = beforeComment.replace(regex, `<span class="py-builtin">${builtin}</span>`)
+			})
+			
+			// Add comment styling if present
+			if (comment) {
+				comment = `<span class="py-comment">${comment}</span>`
+			}
+			
+			result.push(beforeComment + comment)
 		})
-
-		// Built-in functions (purple)
-		builtins.forEach((builtin) => {
-			const regex = new RegExp(`\\b${builtin}\\b`, "g")
-			html = html.replace(
-				regex,
-				`<span class="py-builtin">${builtin}</span>`
-			)
-		})
-
-		// Numbers (cyan)
-		html = html.replace(
-			/\b(\d+\.?\d*|\.\d+)\b/g,
-			'<span class="py-number">$1</span>'
-		)
-
-		codeBlock.innerHTML = html
+		
+		codeBlock.innerHTML = result.join("\n")
 	}
 }
 
