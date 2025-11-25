@@ -49,6 +49,7 @@
 }
 
 /* Code Viewer Modal */
+
 .code-modal {
 	display: none;
 	position: fixed;
@@ -57,7 +58,7 @@
 	top: 0;
 	width: 100%;
 	height: 100%;
-	background-color: rgba(0, 0, 0, 0.5);
+	background-color: rgba(255, 255, 255, 0.6); /* lighter overlay */
 	animation: fadeIn 0.3s ease;
 }
 
@@ -71,16 +72,19 @@
 }
 
 .code-modal-content {
-	background-color: #1e1e1e;
+	background-color: #ffffff; /* light theme */
+	color: #222; /* primary text color */
 	margin: 5% auto;
 	padding: 20px;
+	box-sizing: border-box; /* include padding in width calculations to avoid horizontal overflow */
 	border: 2px solid #bd5d38;
 	border-radius: 12px;
 	width: 90%;
 	max-width: 1000px;
-	max-height: 80vh;
+	max-height: 90vh;
+	/* use modal-only scrolling to ensure content is reachable */
 	overflow: auto;
-	box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+	box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
 	animation: slideIn 0.3s ease;
 }
 
@@ -96,37 +100,58 @@
 }
 
 .code-modal-close {
-	color: #ff5d1c;
+	color: #bd5d38;
 	float: right;
 	font-size: 28px;
-	font-weight: bold;
+	font-weight: 600;
 	cursor: pointer;
-	transition: all 0.3s ease;
+	transition: all 0.18s ease;
 }
 
 .code-modal-close:hover {
-	color: white;
-	transform: scale(1.2);
+	color: #ff7a49;
+	transform: scale(1.05);
 }
 
 #code-modal-title {
-	color: #ff5d1c;
-	margin-bottom: 15px;
-	margin-top: 10px;
-	font-size: 1.5rem;
-	letter-spacing: 0.5px;
+	color: #333;
+	margin-bottom: 12px;
+	margin-top: 6px;
+	font-size: 1.3rem;
+	letter-spacing: 0.2px;
+	font-weight: 500;
 }
 
 #code-modal-body {
-	background-color: #2d2d2d;
-	color: #e0e0e0;
-	padding: 20px;
-	border-radius: 8px;
-	overflow-x: auto;
+	background-color: transparent; /* no dark inner box */
+	color: #222;
+	padding: 0; /* let modal padding handle spacing */
+	border-radius: 6px;
+	/* avoid its own scrollbar; modal-content handles scrolling */
+	overflow: visible;
 	font-family: "Courier New", Courier, monospace;
 	font-size: 0.95rem;
 	line-height: 1.6;
-	border: 1px solid #404040;
+	border: none;
+}
+
+/* Make <pre> wrap so horizontal scrollbars are removed and inner scrollbars disappear */
+.code-modal-content pre {
+	white-space: pre-wrap; /* wrap long lines */
+	word-break: break-word;
+	margin: 0;
+	padding-top: 6px;
+	padding-bottom: 6px;
+}
+
+/* Ensure code elements cannot exceed modal width and wrap when necessary */
+.code-modal-content pre,
+.code-modal-content pre > code,
+.code-modal-content code {
+	max-width: 100%;
+	white-space: pre-wrap !important;
+	overflow-wrap: anywhere;
+	word-break: break-word;
 }
 
 /* Python Syntax Highlighting */
@@ -153,14 +178,15 @@
 }
 
 /* Responsive modal */
+
 @media (max-width: 768px) {
 	.code-modal-content {
 		width: 95%;
-		margin: 20% auto;
-		max-height: 70vh;
+		margin: 8% auto;
+		max-height: 85vh;
 	}
 
 	#code-modal-body {
-		font-size: 0.85rem;
+		font-size: 0.9rem;
 	}
 }

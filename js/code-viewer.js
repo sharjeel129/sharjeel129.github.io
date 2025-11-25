@@ -35,8 +35,14 @@ class CodeViewer {
 	}
 
 	async open(fileUrl, fileName) {
+		// If running from file://, open a local-file picker fallback
+		if (window.location.protocol === "file:") {
+			this.openLocalPrompt(fileUrl, fileName)
+			return
+		}
+
 		try {
-			// Use XMLHttpRequest for better compatibility
+			// Use XMLHttpRequest for better compatibility when served over HTTP(S)
 			const code = await new Promise((resolve, reject) => {
 				const xhr = new XMLHttpRequest()
 				xhr.open("GET", fileUrl, true)
@@ -57,34 +63,80 @@ class CodeViewer {
 			const codeBlock = document.getElementById("code-modal-body")
 			codeBlock.textContent = code
 
-			// Apply syntax highlighting
+			// Render plain code (no aggressive highlighting)
 			this.highlightCode(codeBlock)
 
 			this.modal.style.display = "block"
+			// prevent page behind the modal from scrolling while modal is open
+			document.body.style.overflow = "hidden"
 		} catch (error) {
 			console.error("Error loading file:", error)
 			document.getElementById("code-modal-title").textContent = fileName
-
-			let errorMessage = "Error loading file: " + error.message
-
-			// Check if running locally
-			if (window.location.protocol === "file:") {
-				errorMessage +=
-					"\n\n⚠️  Local Testing Limitation:\nYou're testing locally (file:// protocol). XMLHttpRequest cannot load files locally due to CORS restrictions.\n\nThis will work perfectly once you deploy to your web server!\n\nFile path: " +
-					fileUrl
-			} else {
-				errorMessage += "\n\nMake sure the file exists at: " + fileUrl
-			}
-
 			document.getElementById("code-modal-body").textContent =
-				errorMessage
+				"Error loading file: " +
+				error.message +
+				"\n\nMake sure the file exists at: " +
+				fileUrl
 			this.modal.style.display = "block"
+			// prevent page behind the modal from scrolling while modal is open
+			document.body.style.overflow = "hidden"
 		}
+	}
+
+	// Show user a prompt to select the file from disk when testing locally
+	openLocalPrompt(fileUrl, fileName) {
+		document.getElementById("code-modal-title").textContent = fileName
+		const body = document.getElementById("code-modal-body")
+		body.innerHTML = ""
+
+		const info = document.createElement("div")
+		info.style.color = "#222"
+		info.style.marginBottom = "10px"
+		info.textContent =
+			"You're running the page locally. Please select the file from your disk to view it (choose the matching file in the 'codes' folder)."
+		body.appendChild(info)
+
+		// Add local file input
+		const input = document.createElement("input")
+		input.type = "file"
+		input.accept = ".py"
+		input.style.display = "block"
+		input.style.marginBottom = "10px"
+		body.appendChild(input)
+
+		// Add small tip to run a local server
+		const tip = document.createElement("div")
+		tip.style.color = "#666"
+		tip.style.fontSize = "0.9rem"
+		tip.style.marginTop = "8px"
+		tip.innerHTML =
+			"Tip: for convenience run a local server and open <code>http://localhost:8000</code>.\nIn PowerShell: <code>python -m http.server 8000</code>"
+		body.appendChild(tip)
+
+		input.addEventListener("change", (e) => {
+			const file = e.target.files[0]
+			if (!file) return
+			const reader = new FileReader()
+			reader.onload = () => {
+				body.textContent = ""
+				const pre = document.createElement("pre")
+				const codeEl = document.createElement("code")
+				codeEl.textContent = reader.result
+				pre.appendChild(codeEl)
+				body.appendChild(pre)
+			}
+			reader.readAsText(file)
+		})
+
+		this.modal.style.display = "block"
+		document.body.style.overflow = "hidden"
 	}
 
 	close() {
 		if (this.modal) {
 			this.modal.style.display = "none"
+			// restore page scrolling
+			document.body.style.overflow = ""
 		}
 	}
 
