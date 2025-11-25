@@ -121,9 +121,21 @@ class CodeViewer {
 				body.textContent = ""
 				const pre = document.createElement("pre")
 				const codeEl = document.createElement("code")
+				codeEl.className = "language-python"
 				codeEl.textContent = reader.result
 				pre.appendChild(codeEl)
 				body.appendChild(pre)
+				// apply highlight.js if available
+				if (
+					window.hljs &&
+					typeof hljs.highlightElement === "function"
+				) {
+					try {
+						hljs.highlightElement(codeEl)
+					} catch (e) {
+						console.warn("hljs failed", e)
+					}
+				}
 			}
 			reader.readAsText(file)
 		})
@@ -141,16 +153,95 @@ class CodeViewer {
 	}
 
 	highlightCode(codeBlock) {
-		// Simple display - just escape HTML and show as-is
-		let text = codeBlock.textContent
+		// Use highlight.js when available. If not present, try to load it
+		// dynamically from CDN and then apply highlighting.
+		const text = codeBlock.textContent || ""
+		codeBlock.textContent = text
 
-		// Escape HTML special characters
-		text = text
-			.replace(/&/g, "&amp;")
-			.replace(/</g, "&lt;")
-			.replace(/>/g, "&gt;")
+		this.ensureHljs()
+			.then(() => {
+				try {
+					hljs.highlightElement(codeBlock)
+				} catch (e) {
+					console.warn("hljs.highlightElement failed", e)
+				}
+			})
+			.catch((err) => {
+				console.warn(
+					"Highlight.js not available and failed to load:",
+					err
+				)
+			})
+	}
 
-		codeBlock.innerHTML = text
+	// Ensure highlight.js and python language are loaded. Returns a Promise.
+	ensureHljs() {
+		if (window.hljs && typeof hljs.highlightElement === "function") {
+			return Promise.resolve()
+		}
+
+		// Avoid loading multiple times
+		if (this._hljsPromise) return this._hljsPromise
+
+		this._hljsPromise = new Promise((resolve, reject) => {
+			const cssHref =
+				"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css"
+			const jsSrc =
+				"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"
+			const pySrc =
+				"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/python.min.js"
+
+			// inject CSS if not already present
+			if (!document.querySelector(`link[href="${cssHref}"]`)) {
+				const link = document.createElement("link")
+				link.rel = "stylesheet"
+				link.href = cssHref
+				document.head.appendChild(link)
+			}
+
+			// load highlight core
+			const script = document.createElement("script")
+			script.src = jsSrc
+			script.async = true
+			script.onload = () => {
+				// load python language
+				const py = document.createElement("script")
+				py.src = pySrc
+				py.async = true
+				py.onload = () => {
+					// Some builds auto-register; if not, try to register
+					try {
+						if (window.hljs && hljs.registerLanguage) {
+							try {
+								hljs.registerLanguage(
+									"python",
+									hljs.getLanguage("python") || null
+								)
+							} catch (e) {}
+						}
+					} catch (e) {}
+					// short timeout to let hljs initialize
+					setTimeout(() => {
+						if (
+							window.hljs &&
+							typeof hljs.highlightElement === "function"
+						)
+							resolve()
+						else reject(new Error("hljs loaded but not available"))
+					}, 50)
+				}
+				py.onerror = () =>
+					reject(
+						new Error("Failed to load highlight.js python language")
+					)
+				document.head.appendChild(py)
+			}
+			script.onerror = () =>
+				reject(new Error("Failed to load highlight.js core"))
+			document.head.appendChild(script)
+		})
+
+		return this._hljsPromise
 	}
 }
 

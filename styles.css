@@ -149,7 +149,7 @@
 
 #code-modal-body {
 	background-color: transparent; /* no dark inner box */
-	color: #222;
+	/* do not set a flat color here — allow highlight.js to color tokens */
 	padding: 0; /* let modal padding handle spacing */
 	border-radius: 6px;
 	/* avoid its own scrollbar; modal-content handles scrolling */
