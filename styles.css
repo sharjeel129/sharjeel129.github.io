@@ -48,6 +48,26 @@
 	color: #ff5d1c;
 }
 
+/* Left side navigation gradient override (top -> bottom) */
+#sideNav {
+	background: linear-gradient(to bottom, #0b3d91 0%, #2a7bd8 100%) !important;
+	border-right: none;
+	/* keep text/icons readable */
+	color: #fff;
+}
+
+/* Ensure nav links remain light on the gradient */
+#sideNav .nav-link,
+#sideNav .navbar-brand,
+#sideNav .social-icons a {
+	color: #ffffff !important;
+	opacity: 0.95;
+}
+
+#sideNav .nav-link:hover {
+	opacity: 1;
+}
+
 /* Code Viewer Modal */
 
 .code-modal {
@@ -74,15 +94,19 @@
 .code-modal-content {
 	background-color: #ffffff; /* light theme */
 	color: #222; /* primary text color */
-	margin: 5% auto;
+	/* position the modal with fixed gaps from top and bottom so both are visible */
+	position: absolute;
+	top: 5vh; /* 5% viewport height gap at top */
+	bottom: 5vh; /* 5% viewport height gap at bottom */
+	left: 50%;
+	transform: translateX(-50%);
 	padding: 20px;
 	box-sizing: border-box; /* include padding in width calculations to avoid horizontal overflow */
 	border: 2px solid #bd5d38;
 	border-radius: 12px;
 	width: 90%;
 	max-width: 1000px;
-	max-height: 90vh;
-	/* use modal-only scrolling to ensure content is reachable */
+	/* height is constrained by top/bottom; modal itself scrolls when needed */
 	overflow: auto;
 	box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
 	animation: slideIn 0.3s ease;
@@ -90,11 +114,12 @@
 
 @keyframes slideIn {
 	from {
-		transform: translateY(-50px);
+		/* preserve horizontal centering while sliding vertically */
+		transform: translateX(-50%) translateY(-50px);
 		opacity: 0;
 	}
 	to {
-		transform: translateY(0);
+		transform: translateX(-50%) translateY(0);
 		opacity: 1;
 	}
 }
@@ -182,8 +207,10 @@
 @media (max-width: 768px) {
 	.code-modal-content {
 		width: 95%;
-		margin: 8% auto;
-		max-height: 85vh;
+		left: 50%;
+		transform: translateX(-50%);
+		top: 4vh;
+		bottom: 4vh;
 	}
 
 	#code-modal-body {
