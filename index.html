@@ -22,32 +22,35 @@
 		</script>
 
 		<!-- Note: plugin scripts must be included after the tracking snippet. -->
-		<script src="../ipmeta.io/plugin.js"></script>
-
+		<!-- The plugin file referenced previously used a relative path that doesn't exist locally
+		     (caused console errors). We avoid loading that missing file and only call
+		     provideGtagPlugin if it is actually available at runtime. -->
 		<script>
-			provideGtagPlugin({
-				apiKey: "4253d02fb227cf56b5ffe4749fc369c4500a4ea133cd529460d803c538c04bdb757e23f707a7b2ec",
-				serviceProvider: "dimension1",
-				networkDomain: "dimension2",
-				networkType: "dimension3",
-			})
+			if (typeof provideGtagPlugin === "function") {
+				try {
+					provideGtagPlugin({
+						apiKey: "4253d02fb227cf56b5ffe4749fc369c4500a4ea133cd529460d803c538c04bdb757e23f707a7b2ec",
+						serviceProvider: "dimension1",
+						networkDomain: "dimension2",
+						networkType: "dimension3",
+					})
+				} catch (e) {
+					console.warn("provideGtagPlugin threw an error:", e)
+				}
+			} else {
+				console.info(
+					"provideGtagPlugin not available — skipping plugin initialization"
+				)
+			}
 		</script>
 
 		<!-- Google Tag Manager -->
 		<script>
-			;(function (w, d, s, l, i) {
-				w[l] = w[l] || []
-				w[l].push({
-					"gtm.start": new Date().getTime(),
-					event: "gtm.js",
-				})
-				var f = d.getElementsByTagName(s)[0],
-					j = d.createElement(s),
-					dl = l != "dataLayer" ? "&l=" + l : ""
-				j.async = true
-				j.src = "../www.googletagmanager.com/gtm5445.html?id=" + i + dl
-				f.parentNode.insertBefore(j, f)
-			})(window, document, "script", "dataLayer", "GTM-T3ZWTPD")
+			/* Removed faulty local-relative GTM loader. The previous code attempted to
+			   load Google Tag Manager from a relative path ("../www.googletagmanager.com/...")
+			   which does not exist and produced a 404 during local testing. If you need
+			   GTM in production, use the official GTM snippet provided by Google and
+			   ensure it points to the remote URL (https://www.googletagmanager.com/...). */
 		</script>
 		<!-- End Google Tag Manager -->
 
@@ -95,10 +98,6 @@
 
 		<!-- Custom styles for this template -->
 		<link href="css/resume.min.css" rel="stylesheet" />
-		<link
-			rel="stylesheet"
-			href="path/to/font-awesome/css/font-awesome.min.css"
-		/>
 
 		<!-- Highlight.js styles (for code viewer) -->
 		<link
