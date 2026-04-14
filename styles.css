@@ -22,18 +22,19 @@
 .btn {
 	font-size: 1rem;
 	font-weight: 400;
-	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-		"Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
-		"Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+	font-family:
+		-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+		Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+		"Segoe UI Symbol", "Noto Color Emoji";
 	border: 2px solid black;
-	border-color: #bd5d38 !important;
+	border-color: #63aaff !important;
 	border-radius: 5px;
 	background-color: white;
 	color: #868e96;
 }
 
 .btn:hover {
-	background: #bd5d38 !important;
+	background: #63aaff !important;
 	color: white;
 }
 .table-proj {
@@ -45,7 +46,7 @@
 }
 .date-proj {
 	float: right;
-	color: #ff5d1c;
+	color: #63aaff;
 }
 
 /* Left side navigation: solid background (no gradient) */
@@ -60,7 +61,11 @@
 #sideNav .navbar-brand,
 #sideNav .social-icons a {
 	color: #ffffff !important;
-	opacity: 0.95;
+	opacity: 1;
+}
+
+.img-fluid {
+	border-color: #ffffff !important;
 }
 
 #sideNav .nav-link:hover {
@@ -101,7 +106,7 @@
 	transform: translateX(-50%);
 	padding: 20px;
 	box-sizing: border-box; /* include padding in width calculations to avoid horizontal overflow */
-	border: 2px solid #bd5d38;
+	border: 2px solid #63aaff;
 	border-radius: 12px;
 	width: 90%;
 	max-width: 1000px;
@@ -124,7 +129,7 @@
 }
 
 .code-modal-close {
-	color: #bd5d38;
+	color: #63aaff;
 	float: right;
 	font-size: 28px;
 	font-weight: 600;
@@ -133,7 +138,7 @@
 }
 
 .code-modal-close:hover {
-	color: #ff7a49;
+	color: #63aaff;
 	transform: scale(1.05);
 }
 
@@ -189,7 +194,7 @@
 }
 
 .py-string {
-	color: #ce9178;
+	color: #63aaff;
 }
 
 .py-comment {
@@ -215,4 +220,14 @@
 	#code-modal-body {
 		font-size: 0.9rem;
 	}
+}
+
+/* Profile image styles */
+#sideNav .navbar-brand .img-profile {
+	border: 0.4rem solid #286dc0bb !important;
+	border-radius: 50% !important;
+}
+
+.text-primary {
+	color: #286dc0 !important;
 }
